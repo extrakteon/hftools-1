@@ -64,11 +64,11 @@ def ylabel_fmt(fmt, unit=None, axes=None):
         axes.set_ylabel_fmt(fmt, unit)
 
 default_unit_names = {"s": "Time",
-                      u"s": "Time",
+                      "s": "Time",
                       "Hz": "Frequency",
-                      u"Hz": "Frequency",
+                      "Hz": "Frequency",
                       "m": "Length",
-                      u"m": "Length",
+                      "m": "Length",
                       }
 
 
@@ -194,12 +194,12 @@ class UnitFormatter(FormatStrFormatter):
                 return ""
             else:
                 if self.default_unit == "deg":
-                    return u"\xb0"
+                    return "\xb0"
                 else:
                     return self.default_unit
         else:
             if self._label_unit == "deg":
-                return u"\xb0"
+                return "\xb0"
             else:
                 return self._label_unit
 
@@ -223,15 +223,15 @@ class UnitFormatter(FormatStrFormatter):
         fmt = self.get_label_fmt()
         if "[]" in fmt:
             if self.get_label_unit():
-                fmt = fmt.replace("[]", u"[%(prefix)s{unit}]")
+                fmt = fmt.replace("[]", "[%(prefix)s{unit}]")
             else:
-                fmt = fmt.replace("[]", u"[%(prefix)sU]")
+                fmt = fmt.replace("[]", "[%(prefix)sU]")
         elif "[^]" in fmt:
             if self.get_label_unit():
-                fmt = fmt.replace("[^]", u"$[10^{{%%(powerprefix).0f" +
-                                  u"\\rm{{{unit}}}}]$")
+                fmt = fmt.replace("[^]", "$[10^{{%%(powerprefix).0f" +
+                                  "\\rm{{{unit}}}}]$")
             else:
-                fmt = fmt.replace("[^]", u"$[10^{{%(powerprefix).0f}}]$")
+                fmt = fmt.replace("[^]", "$[10^{{%(powerprefix).0f}}]$")
         if "{unit}" in fmt or "{default}" in fmt:
             dct = self.get_label_name_and_unit()
             fmt = fmt.format(**dct)
@@ -266,7 +266,7 @@ class HFToolsAxes(Axes):
             kw = kwargs.copy()
             lines = []
             if len(Ns) == 1:
-                C = zip(itertools.cycle(self.colorcycle), range(Ns[0]))
+                C = list(zip(itertools.cycle(self.colorcycle), list(range(Ns[0]))))
                 for c, i in C:
                     #kw.update(dict(color=c))
                     if hasattr(x, "dims") and (get_dims_names(x) ==
@@ -277,8 +277,8 @@ class HFToolsAxes(Axes):
                     lines.extend(Axes.plot(self, xx, remove_tail(y[:, i]),
                                            *args, **kw))
             elif len(Ns) == 2:
-                C = zip(itertools.cycle(self.colorcycle), range(Ns[0]))
-                M = zip(itertools.cycle(self.markercycle), range(Ns[1]))
+                C = list(zip(itertools.cycle(self.colorcycle), list(range(Ns[0]))))
+                M = list(zip(itertools.cycle(self.markercycle), list(range(Ns[1]))))
                 for c, i in C:
                     for m, j in M:
                         if hasattr(x, "dims") and (get_dims_names(x) ==
@@ -291,9 +291,9 @@ class HFToolsAxes(Axes):
                                                remove_tail(y[:, i, j]),
                                                *args, **kw))
             elif len(Ns) > 2:
-                C = zip(itertools.cycle(self.colorcycle), range(Ns[0]))
-                M = zip(itertools.cycle(self.markercycle), range(Ns[1]))
-                L = zip(itertools.cycle(self.linecycle), range(Ns[2]))
+                C = list(zip(itertools.cycle(self.colorcycle), list(range(Ns[0]))))
+                M = list(zip(itertools.cycle(self.markercycle), list(range(Ns[1]))))
+                L = list(zip(itertools.cycle(self.linecycle), list(range(Ns[2]))))
                 for c, i in C:
                     for m, j in M:
                         for l, k in L:
@@ -316,7 +316,7 @@ class HFToolsAxes(Axes):
         vars = args[:2]
         args = args[2:]
 
-        if len(vars) == 2 and isinstance(vars[1], (str, unicode)):
+        if len(vars) == 2 and isinstance(vars[1], str):
             args = (vars[1],) + args
             vars = vars[:1]
 
@@ -530,9 +530,9 @@ class DegAxes(MagAxes):
 
     def __init__(self, *args, **kwargs):
         MagAxes.__init__(self, *args, **kwargs)
-        self.set_ylabel_fmt(u"[]")
+        self.set_ylabel_fmt("[]")
 
-    def set_ylabel_fmt(self, fmt, unit=u"\xb0"):
+    def set_ylabel_fmt(self, fmt, unit="\xb0"):
         MagAxes.set_ylabel_fmt(self, fmt, unit)
 matplotlib.projections.register_projection(DegAxes)
 
@@ -552,9 +552,9 @@ class RadAxes(MagAxes):
 
     def __init__(self, *args, **kwargs):
         MagAxes.__init__(self, *args, **kwargs)
-        self.set_ylabel_fmt(u"[]")
+        self.set_ylabel_fmt("[]")
 
-    def set_ylabel_fmt(self, fmt, unit=u"rad"):
+    def set_ylabel_fmt(self, fmt, unit="rad"):
         MagAxes.set_ylabel_fmt(self, fmt, unit)
 matplotlib.projections.register_projection(RadAxes)
 
@@ -571,7 +571,7 @@ class ComplexPolarAxes(PolarAxes):
         projection = self.name
         vars = args[:2]
         args = args[2:]
-        if len(vars) == 2 and isinstance(vars[1], (str, unicode)):
+        if len(vars) == 2 and isinstance(vars[1], str):
             args = (vars[1],) + args
             vars = vars[:1]
 
@@ -819,7 +819,7 @@ def arrange_figures(layout=None, screen=2, xgap=10,
         x0 = (pylab.get_current_fig_manager().window.winfo_screenwidth() +
               offset)
     if figlist is None:
-        figlist = sorted([x for x in Gcf.figs.items()])
+        figlist = sorted([x for x in list(Gcf.figs.items())])
 
     x = x0
     y = y0
@@ -914,7 +914,7 @@ def get_figure_positions():
     """Hamta position for alla figurer
 
     """
-    return [(i, get_current_figure_position(i)) for i in Gcf.figs.keys()]
+    return [(i, get_current_figure_position(i)) for i in list(Gcf.figs.keys())]
 
 
 if __name__ == '__main__':
